@@ -2,6 +2,7 @@ import express, { Request, Response } from "express";
 import { body } from "express-validator";
 import { requireAuth, validateRequest } from "@specomm/common";
 import { Product } from "../models/Product";
+import { TicketCreatedPublisher } from "../events/publishers/TicketCreatedPublisher";
 
 const router = express.Router();
 
@@ -25,6 +26,12 @@ router.post(
     });
 
     await product.save();
+    // new TicketCreatedPublisher(client).publish({
+    //   id: product.id,
+    //   title: product.title,
+    //   price: product.price,
+    //   userId: product.userId,
+    // });
 
     res.status(201).send(product);
   }
