@@ -1,6 +1,8 @@
 import express, { Request, Response } from "express";
 import { body } from "express-validator";
 import { Product } from "../models/Product";
+import { TicketUpdatedPublisher } from "../events/publishers/TicketUpdatedPublisher";
+import { natsWrapper } from "../../nats-wrapper";
 import {
   NotAuthorizedError,
   NotFoundError,
@@ -36,6 +38,13 @@ router.put(
     });
 
     await product.save();
+
+    new TicketUpdatedPublisher(natsWrapper.client).publish({
+      id: product.id,
+      title: product.title,
+      price: product.price,
+      userId: product.userId,
+    });
 
     res.send(product);
   }

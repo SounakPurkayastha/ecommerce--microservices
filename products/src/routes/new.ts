@@ -3,6 +3,7 @@ import { body } from "express-validator";
 import { requireAuth, validateRequest } from "@specomm/common";
 import { Product } from "../models/Product";
 import { TicketCreatedPublisher } from "../events/publishers/TicketCreatedPublisher";
+import { natsWrapper } from "../../nats-wrapper";
 
 const router = express.Router();
 
@@ -26,12 +27,12 @@ router.post(
     });
 
     await product.save();
-    // new TicketCreatedPublisher(client).publish({
-    //   id: product.id,
-    //   title: product.title,
-    //   price: product.price,
-    //   userId: product.userId,
-    // });
+    new TicketCreatedPublisher(natsWrapper.client).publish({
+      id: product.id,
+      title: product.title,
+      price: product.price,
+      userId: product.userId,
+    });
 
     res.status(201).send(product);
   }
