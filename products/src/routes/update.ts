@@ -2,7 +2,7 @@ import express, { Request, Response } from "express";
 import { body } from "express-validator";
 import { Product } from "../models/Product";
 import { TicketUpdatedPublisher } from "../events/publishers/TicketUpdatedPublisher";
-import { natsWrapper } from "../../nats-wrapper";
+import { natsWrapper } from "../nats-wrapper";
 import {
   NotAuthorizedError,
   NotFoundError,
