@@ -1,6 +1,7 @@
 import request from "supertest";
 import { app } from "../../app";
 import { Product } from "../../models/Product";
+import { natsWrapper } from "../../nats-wrapper";
 
 jest.mock("../../nats-wrapper");
 
@@ -53,4 +54,14 @@ it("creates products with valid inputs", async () => {
   products = await Product.find();
 
   expect(products.length).toEqual(1);
+});
+
+it("publishes an event", async () => {
+  await request(app)
+    .post("/api/products")
+    .set("Cookie", global.signin())
+    .send({ title: "asdasdasd", price: 10 })
+    .expect(201);
+
+  expect(natsWrapper.client.publish).toHaveBeenCalled();
 });

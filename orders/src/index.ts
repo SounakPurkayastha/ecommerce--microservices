@@ -6,7 +6,11 @@ const start = async () => {
   if (!process.env.JWT_KEY) throw new Error("JWT_KEY must be defined");
   if (!process.env.MONGO_URI) throw new Error("MONGO_URI not defined");
   try {
-    await natsWrapper.connect("guitars", "asdasdadaef", "http://nats-srv:4222");
+    await natsWrapper.connect(
+      "guitars",
+      "asdasdadaefs",
+      "http://nats-srv:4222"
+    );
     natsWrapper.client.on("close", () => {
       console.log("NATS connection closed!");
       process.exit();
