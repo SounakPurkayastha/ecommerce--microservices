@@ -1,4 +1,3 @@
-import axios from "axios";
 import buildClient from "../api/buildClient";
 
 const Index = ({ currentUser }) => {
