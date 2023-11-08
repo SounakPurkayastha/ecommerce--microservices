@@ -1,6 +1,6 @@
 import { Message } from "node-nats-streaming";
 import { Subjects, Listener, TicketCreatedEvent } from "@specomm/common";
-import { Ticket } from "../../src/models/Ticket";
+import { Ticket } from "../../models/Ticket";
 import { queueGroupName } from "./queue-group-name";
 
 export class TicketCreatedListener extends Listener<TicketCreatedEvent> {

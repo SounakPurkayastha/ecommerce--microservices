@@ -44,6 +44,7 @@ router.put(
       title: product.title,
       price: product.price,
       userId: product.userId,
+      version: product.version,
     });
 
     res.send(product);

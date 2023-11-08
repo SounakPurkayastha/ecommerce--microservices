@@ -1,6 +1,6 @@
 import { Message } from "node-nats-streaming";
 import { Subjects, Listener, TicketUpdatedEvent } from "@specomm/common";
-import { Ticket } from "../../src/models/Ticket";
+import { Ticket } from "../../models/Ticket";
 import { queueGroupName } from "./queue-group-name";
 
 export class TicketUpdatedListener extends Listener<TicketUpdatedEvent> {
@@ -8,7 +8,8 @@ export class TicketUpdatedListener extends Listener<TicketUpdatedEvent> {
   queueGroupName = queueGroupName;
 
   async onMessage(data: TicketUpdatedEvent["data"], msg: Message) {
-    const ticket = await Ticket.findById(data.id);
+    const ticket = await Ticket.findByEvent(data);
+
     if (!ticket) throw new Error("Ticket not found");
 
     const { title, price } = data;
