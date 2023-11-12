@@ -1,27 +1,32 @@
-import { Listener, OrderCreatedEvent, Subjects } from "@specomm/common";
+import {
+  Listener,
+  NotFoundError,
+  OrderCancelledEvent,
+  Subjects,
+} from "@specomm/common";
 import { queueGroupName } from "./queue-group-name";
 import { Message } from "node-nats-streaming";
 import { Product } from "../../models/Product";
-import { NotFoundError } from "@specomm/common";
 import { TicketUpdatedPublisher } from "../publishers/TicketUpdatedPublisher";
 
-export class OrderCreatedListener extends Listener<OrderCreatedEvent> {
-  subject: Subjects.OrderCreated = Subjects.OrderCreated;
-  queueGroupName = queueGroupName;
+export class OrderCancelledListener extends Listener<OrderCancelledEvent> {
+  subject: Subjects.OrderCancelled = Subjects.OrderCancelled;
 
-  async onMessage(data: OrderCreatedEvent["data"], message: Message) {
+  queueGroupName: string = queueGroupName;
+
+  async onMessage(data: OrderCancelledEvent["data"], message: Message) {
     const ticket = await Product.findById(data.ticket.id);
     if (!ticket) throw new NotFoundError();
-    ticket.set({ orderId: data.id });
-
+    ticket.set({ orderId: undefined });
     await ticket.save();
+
     await new TicketUpdatedPublisher(this.client).publish({
       id: ticket.id,
-      price: ticket.price,
-      title: ticket.title,
-      userId: ticket.userId,
       orderId: ticket.orderId,
+      userId: ticket.userId,
+      price: ticket.price,
       version: ticket.version,
+      title: ticket.title,
     });
 
     message.ack();

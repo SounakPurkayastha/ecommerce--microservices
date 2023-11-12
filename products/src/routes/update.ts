@@ -4,6 +4,7 @@ import { Product } from "../models/Product";
 import { TicketUpdatedPublisher } from "../events/publishers/TicketUpdatedPublisher";
 import { natsWrapper } from "../nats-wrapper";
 import {
+  BadRequestError,
   NotAuthorizedError,
   NotFoundError,
   requireAuth,
@@ -27,6 +28,9 @@ router.put(
     if (!product) {
       throw new NotFoundError();
     }
+
+    if (product.orderId)
+      throw new BadRequestError("Cannot edit reserved ticket");
 
     if (product.userId != req.currentUser!.id) {
       throw new NotAuthorizedError();
